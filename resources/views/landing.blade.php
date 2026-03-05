@@ -77,26 +77,62 @@
                     </h2>
                     <p id="tipo-selecionado-texto" class="text-center text-gray-600 mb-6"></p>
 
-                    <form action="{{ route('lead.store') }}" method="POST" class="space-y-5">
+                    <form action="{{ route('lead.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                         @csrf
 
                         <!-- Campo Hidden para Tipo de Cliente -->
                         <input type="hidden" id="tipo_cliente" name="tipo_cliente" value="">
 
-                        <!-- Nome Completo -->
-                        <div>
-                            <label for="nome" class="block text-gray-700 font-semibold mb-2">
-                                Nome completo *
-                            </label>
-                            <input 
-                                type="text" 
-                                id="nome" 
-                                name="nome" 
-                                value="{{ old('nome') }}"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                                placeholder="Digite seu nome completo"
-                            >
+                        <!-- Campos para RESIDENCIAL (Casa) -->
+                        <div id="campos-residencial" class="space-y-5">
+                            <!-- Nome Completo -->
+                            <div>
+                                <label for="nome" class="block text-gray-700 font-semibold mb-2">
+                                    Nome completo *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="nome" 
+                                    name="nome" 
+                                    value="{{ old('nome') }}"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
+                                    placeholder="Digite seu nome completo"
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Campos para COMERCIAL/RURAL (Empresa) -->
+                        <div id="campos-empresa" class="space-y-5 hidden">
+                            <!-- Razão Social -->
+                            <div>
+                                <label for="razao_social" class="block text-gray-700 font-semibold mb-2">
+                                    Razão Social *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="razao_social" 
+                                    name="razao_social" 
+                                    value="{{ old('razao_social') }}"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                    placeholder="Digite a razão social da empresa"
+                                >
+                            </div>
+
+                            <!-- CNPJ -->
+                            <div>
+                                <label for="cnpj" class="block text-gray-700 font-semibold mb-2">
+                                    CNPJ *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="cnpj" 
+                                    name="cnpj" 
+                                    value="{{ old('cnpj') }}"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                    placeholder="00.000.000/0000-00"
+                                    maxlength="18"
+                                >
+                            </div>
                         </div>
 
                         <!-- WhatsApp -->
@@ -149,6 +185,33 @@
                             >
                         </div>
 
+                        <!-- Foto da Conta -->
+                        <div>
+                            <label for="foto_conta" class="block text-gray-700 font-semibold mb-2">
+                                Foto da conta de energia (opcional)
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="file" 
+                                    id="foto_conta" 
+                                    name="foto_conta" 
+                                    accept="image/jpeg,image/jpg,image/png,application/pdf"
+                                    class="hidden"
+                                    onchange="mostrarNomeArquivo(this)"
+                                >
+                                <label 
+                                    for="foto_conta" 
+                                    class="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition bg-gray-50 hover:bg-green-50"
+                                >
+                                    <svg class="w-6 h-6 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span id="nome-arquivo" class="text-gray-600">Clique para enviar a foto</span>
+                                </label>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Formatos aceitos: JPG, PNG ou PDF (máx. 5MB)</p>
+                        </div>
+
                         <!-- Botão de Envio -->
                         <button 
                             type="submit"
@@ -168,6 +231,17 @@
     </div>
 
     <script>
+        function mostrarNomeArquivo(input) {
+            const nomeArquivo = document.getElementById('nome-arquivo');
+            if (input.files && input.files[0]) {
+                nomeArquivo.textContent = input.files[0].name;
+                nomeArquivo.classList.add('text-green-600', 'font-semibold');
+            } else {
+                nomeArquivo.textContent = 'Clique para enviar a foto';
+                nomeArquivo.classList.remove('text-green-600', 'font-semibold');
+            }
+        }
+
         function selecionarTipo(tipo) {
             // Ocultar seção de seleção
             document.getElementById('selecao-tipo').classList.add('hidden');
@@ -178,13 +252,44 @@
             // Definir o tipo de cliente no campo hidden
             document.getElementById('tipo_cliente').value = tipo;
             
-            // Atualizar texto informativo
-            const textoTipo = tipo === 'Residencial' ? 'Plano para sua casa' : 'Plano para sua empresa';
-            document.getElementById('tipo-selecionado-texto').textContent = textoTipo;
+            // Mostrar/ocultar campos específicos
+            const camposResidencial = document.getElementById('campos-residencial');
+            const camposEmpresa = document.getElementById('campos-empresa');
+            const inputNome = document.getElementById('nome');
+            const inputRazaoSocial = document.getElementById('razao_social');
+            const inputCnpj = document.getElementById('cnpj');
+            
+            if (tipo === 'Residencial') {
+                camposResidencial.classList.remove('hidden');
+                camposEmpresa.classList.add('hidden');
+                inputNome.required = true;
+                inputRazaoSocial.required = false;
+                inputCnpj.required = false;
+                document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua casa';
+            } else {
+                camposResidencial.classList.add('hidden');
+                camposEmpresa.classList.remove('hidden');
+                inputNome.required = false;
+                inputRazaoSocial.required = true;
+                inputCnpj.required = true;
+                document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua empresa';
+            }
             
             // Scroll suave para o formulário
             document.getElementById('formulario-container').scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Máscara de CNPJ
+        document.getElementById('cnpj').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 14) {
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
 
         function voltarSelecao() {
             // Mostrar seção de seleção
