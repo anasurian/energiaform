@@ -282,7 +282,19 @@
 
         // Máscara de CNPJ e consulta automática
         document.getElementById('cnpj').addEventListener('input', function(e) {
+            const razaoSocialInput = document.getElementById('razao_social');
+            const cnpjInput = e.target;
+            
             let value = e.target.value.replace(/\D/g, '');
+            
+            // Limpar razão social se o CNPJ for modificado (não tiver 14 dígitos)
+            if (value.length < 14) {
+                razaoSocialInput.value = '';
+                razaoSocialInput.classList.remove('border-green-500');
+                cnpjInput.classList.remove('border-green-500', 'border-blue-500', 'border-red-500');
+            }
+            
+            // Aplicar máscara
             if (value.length <= 14) {
                 value = value.replace(/^(\d{2})(\d)/, '$1.$2');
                 value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
