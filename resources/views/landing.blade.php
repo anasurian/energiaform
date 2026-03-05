@@ -290,6 +290,7 @@
             const inputRazaoSocial = document.getElementById('razao_social');
             const inputCnpj = document.getElementById('cnpj');
             const inputSegmento = document.getElementById('segmento');
+            const inputValorConta = document.getElementById('valor_conta');
             
             if (tipo === 'Residencial') {
                 camposResidencial.classList.remove('hidden');
@@ -298,6 +299,8 @@
                 inputRazaoSocial.required = false;
                 inputCnpj.required = false;
                 inputSegmento.required = false;
+                inputValorConta.min = '0';
+                inputValorConta.placeholder = 'Ex: 250.00';
                 document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua casa';
             } else {
                 camposResidencial.classList.add('hidden');
@@ -306,6 +309,8 @@
                 inputRazaoSocial.required = true;
                 inputCnpj.required = true;
                 inputSegmento.required = true;
+                inputValorConta.min = '500';
+                inputValorConta.placeholder = 'Mínimo: R$ 500.00';
                 document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua empresa';
             }
             

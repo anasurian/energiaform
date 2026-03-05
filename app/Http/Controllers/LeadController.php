@@ -18,7 +18,6 @@ class LeadController extends Controller
             'tipo_cliente' => 'required|in:Residencial,Comercial,Rural',
             'whatsapp' => 'required|string|max:20',
             'cidade' => 'required|string|max:255',
-            'valor_conta' => 'required|numeric|min:0',
             'foto_conta' => 'nullable|image|mimes:jpeg,jpg,png,pdf|max:5120'
         ];
 
@@ -38,11 +37,14 @@ class LeadController extends Controller
             $rules['cnpj'] = 'required|string|max:18';
             $rules['razao_social'] = 'required|string|max:255';
             $rules['segmento'] = 'required|string|max:100';
+            $rules['valor_conta'] = 'required|numeric|min:500';
             $messages['cnpj.required'] = 'O CNPJ é obrigatório para empresas';
             $messages['razao_social.required'] = 'A razão social é obrigatória';
             $messages['segmento.required'] = 'O segmento é obrigatório';
+            $messages['valor_conta.min'] = 'O valor mínimo para empresas é R$ 500,00';
         } else {
             $rules['nome'] = 'required|string|max:255';
+            $rules['valor_conta'] = 'required|numeric|min:0';
             $messages['nome.required'] = 'O nome é obrigatório';
         }
 
