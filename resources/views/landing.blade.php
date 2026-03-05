@@ -103,21 +103,6 @@
 
                         <!-- Campos para COMERCIAL/RURAL (Empresa) -->
                         <div id="campos-empresa" class="space-y-5 hidden">
-                            <!-- Razão Social -->
-                            <div>
-                                <label for="razao_social" class="block text-gray-700 font-semibold mb-2">
-                                    Razão Social *
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="razao_social" 
-                                    name="razao_social" 
-                                    value="{{ old('razao_social') }}"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                                    placeholder="Digite a razão social da empresa"
-                                >
-                            </div>
-
                             <!-- CNPJ -->
                             <div>
                                 <label for="cnpj" class="block text-gray-700 font-semibold mb-2">
@@ -128,9 +113,25 @@
                                     id="cnpj" 
                                     name="cnpj" 
                                     value="{{ old('cnpj') }}"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                     placeholder="00.000.000/0000-00"
                                     maxlength="18"
+                                >
+                                <p class="text-xs text-gray-500 mt-1">Digite o CNPJ para buscar automaticamente</p>
+                            </div>
+
+                            <!-- Razão Social -->
+                            <div>
+                                <label for="razao_social" class="block text-gray-700 font-semibold mb-2">
+                                    Razão Social *
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="razao_social" 
+                                    name="razao_social" 
+                                    value="{{ old('razao_social') }}"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                    placeholder="Digite a razão social da empresa"
                                 >
                             </div>
                         </div>
@@ -279,7 +280,7 @@
             document.getElementById('formulario-container').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Máscara de CNPJ
+        // Máscara de CNPJ e consulta automática
         document.getElementById('cnpj').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length <= 14) {
@@ -289,7 +290,50 @@
                 value = value.replace(/(\d{4})(\d)/, '$1-$2');
             }
             e.target.value = value;
+
+            // Consultar CNPJ quando tiver 14 dígitos
+            const cnpjLimpo = value.replace(/\D/g, '');
+            if (cnpjLimpo.length === 14) {
+                consultarCNPJ(cnpjLimpo);
+            }
         });
+
+        // Função para consultar CNPJ na Receita Federal
+        async function consultarCNPJ(cnpj) {
+            const razaoSocialInput = document.getElementById('razao_social');
+            const cnpjInput = document.getElementById('cnpj');
+            
+            // Mostrar loading
+            razaoSocialInput.value = 'Consultando...';
+            razaoSocialInput.disabled = true;
+            cnpjInput.classList.add('border-blue-500');
+
+            try {
+                const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    razaoSocialInput.value = data.razao_social || data.nome_fantasia || '';
+                    razaoSocialInput.classList.add('border-green-500');
+                    cnpjInput.classList.remove('border-blue-500');
+                    cnpjInput.classList.add('border-green-500');
+                } else {
+                    throw new Error('CNPJ não encontrado');
+                }
+            } catch (error) {
+                razaoSocialInput.value = '';
+                razaoSocialInput.placeholder = 'CNPJ não encontrado. Digite manualmente.';
+                cnpjInput.classList.remove('border-blue-500');
+                cnpjInput.classList.add('border-red-500');
+                
+                setTimeout(() => {
+                    cnpjInput.classList.remove('border-red-500');
+                    razaoSocialInput.placeholder = 'Digite a razão social da empresa';
+                }, 3000);
+            } finally {
+                razaoSocialInput.disabled = false;
+            }
+        }
 
         function voltarSelecao() {
             // Mostrar seção de seleção
