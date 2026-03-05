@@ -10,6 +10,7 @@ class Lead extends Model
         'nome',
         'cnpj',
         'razao_social',
+        'segmento',
         'whatsapp',
         'cidade',
         'valor_conta',

@@ -134,6 +134,36 @@
                                     placeholder="Digite a razão social da empresa"
                                 >
                             </div>
+
+                            <!-- Segmento -->
+                            <div>
+                                <label for="segmento" class="block text-gray-700 font-semibold mb-2">
+                                    Segmento da empresa *
+                                </label>
+                                <select 
+                                    id="segmento" 
+                                    name="segmento" 
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white"
+                                >
+                                    <option value="">Selecione o segmento</option>
+                                    <option value="Açougue" {{ old('segmento') == 'Açougue' ? 'selected' : '' }}>Açougue</option>
+                                    <option value="Padaria" {{ old('segmento') == 'Padaria' ? 'selected' : '' }}>Padaria</option>
+                                    <option value="Restaurante" {{ old('segmento') == 'Restaurante' ? 'selected' : '' }}>Restaurante</option>
+                                    <option value="Supermercado" {{ old('segmento') == 'Supermercado' ? 'selected' : '' }}>Supermercado</option>
+                                    <option value="Farmácia" {{ old('segmento') == 'Farmácia' ? 'selected' : '' }}>Farmácia</option>
+                                    <option value="Loja de Roupas" {{ old('segmento') == 'Loja de Roupas' ? 'selected' : '' }}>Loja de Roupas</option>
+                                    <option value="Salão de Beleza" {{ old('segmento') == 'Salão de Beleza' ? 'selected' : '' }}>Salão de Beleza</option>
+                                    <option value="Academia" {{ old('segmento') == 'Academia' ? 'selected' : '' }}>Academia</option>
+                                    <option value="Oficina Mecânica" {{ old('segmento') == 'Oficina Mecânica' ? 'selected' : '' }}>Oficina Mecânica</option>
+                                    <option value="Posto de Combustível" {{ old('segmento') == 'Posto de Combustível' ? 'selected' : '' }}>Posto de Combustível</option>
+                                    <option value="Hotel/Pousada" {{ old('segmento') == 'Hotel/Pousada' ? 'selected' : '' }}>Hotel/Pousada</option>
+                                    <option value="Clínica/Consultório" {{ old('segmento') == 'Clínica/Consultório' ? 'selected' : '' }}>Clínica/Consultório</option>
+                                    <option value="Escritório" {{ old('segmento') == 'Escritório' ? 'selected' : '' }}>Escritório</option>
+                                    <option value="Indústria" {{ old('segmento') == 'Indústria' ? 'selected' : '' }}>Indústria</option>
+                                    <option value="Agronegócio" {{ old('segmento') == 'Agronegócio' ? 'selected' : '' }}>Agronegócio</option>
+                                    <option value="Outro" {{ old('segmento') == 'Outro' ? 'selected' : '' }}>Outro</option>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- WhatsApp -->
@@ -259,6 +289,7 @@
             const inputNome = document.getElementById('nome');
             const inputRazaoSocial = document.getElementById('razao_social');
             const inputCnpj = document.getElementById('cnpj');
+            const inputSegmento = document.getElementById('segmento');
             
             if (tipo === 'Residencial') {
                 camposResidencial.classList.remove('hidden');
@@ -266,6 +297,7 @@
                 inputNome.required = true;
                 inputRazaoSocial.required = false;
                 inputCnpj.required = false;
+                inputSegmento.required = false;
                 document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua casa';
             } else {
                 camposResidencial.classList.add('hidden');
@@ -273,6 +305,7 @@
                 inputNome.required = false;
                 inputRazaoSocial.required = true;
                 inputCnpj.required = true;
+                inputSegmento.required = true;
                 document.getElementById('tipo-selecionado-texto').textContent = 'Plano para sua empresa';
             }
             

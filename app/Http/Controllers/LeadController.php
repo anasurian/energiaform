@@ -37,8 +37,10 @@ class LeadController extends Controller
         if ($request->tipo_cliente === 'Comercial' || $request->tipo_cliente === 'Rural') {
             $rules['cnpj'] = 'required|string|max:18';
             $rules['razao_social'] = 'required|string|max:255';
+            $rules['segmento'] = 'required|string|max:100';
             $messages['cnpj.required'] = 'O CNPJ é obrigatório para empresas';
             $messages['razao_social.required'] = 'A razão social é obrigatória';
+            $messages['segmento.required'] = 'O segmento é obrigatório';
         } else {
             $rules['nome'] = 'required|string|max:255';
             $messages['nome.required'] = 'O nome é obrigatório';
